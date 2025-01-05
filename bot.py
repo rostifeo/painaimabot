@@ -101,7 +101,7 @@ if __name__ == "__main__":
     application.add_handler(CallbackQueryHandler(select_language, pattern="^lang_"))
     application.add_handler(CallbackQueryHandler(select_province, pattern="^province_"))
 
-    await application.run_polling()
+    application.run_polling()
 
 # Для ожидания завершения работы
 if __name__ == "__main__":
