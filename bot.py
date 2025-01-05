@@ -94,7 +94,7 @@ async def select_province(update: Update, context: CallbackContext):
     )
 
 # Основная функция
-async def main():
+if __name__ == "__main__":
     application = Application.builder().token("7761938356:AAHmFF40Kd8qNRONnfGFNgtP2-cUzQsDmL8").build()
 
     application.add_handler(CommandHandler("start", start))
