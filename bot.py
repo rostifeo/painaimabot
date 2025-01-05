@@ -4,23 +4,23 @@ from telegram.ext import Application, CommandHandler, CallbackQueryHandler, Call
 # Список провинций Таиланда
 provinces = {
     "ru": ["Бангкок", "Чиангмай", "Пхукет", "Краби", "Чианграй", "Лампанг", "Лампхун", "Мае Хонг Сон", 
-"Накхонсаван", "Утхайтхани", "Кампхэнгпхет", "Так", "Сукхотхай", "Пхитсанулок", "Пхичит", 
-"Пхетчабун", "Ратчабури", "Канчанабури", "Супханбури", "Накхонпатхом", "Самутсакхон", 
-"Самутсонгкхрам", "Пхетчабури", "Прачуапкхирикхан", "Чонбури", "Районг", "Чантхабури", 
-"Трат", "Накхоннайок", "Прачинабури", "Сакэу", "Накхонратчасима", "Бурирами", "Сурин", 
-"Сисакет", "Убонратчатхани", "Ясотхон", "Чайяпхум", "Амнатчарен", "Нонгбуалампху", 
-"Конкэн", "Удонтхани", "Лой", "Нонгкхай", "Махасаракхам", "Роет", "Каласин", "Саконнакхон", 
-"Накхонпханом", "Мукдахан", "Пхатталунг", "Сонгкхла", "Паттани", "Яла", "Наративат", 
-"Сатун", "Транг", "Накхонситхаммарат", "Пхангнга", "Ранонг", "Чумпхон", "Сураттхани"],
+           "Накхонсаван", "Утхайтхани", "Кампхэнгпхет", "Так", "Сукхотхай", "Пхитсанулок", "Пхичит", 
+           "Пхетчабун", "Ратчабури", "Канчанабури", "Супханбури", "Накхонпатхом", "Самутсакхон", 
+           "Самутсонгкхрам", "Пхетчабури", "Прачуапкхирикхан", "Чонбури", "Районг", "Чантхабури", 
+           "Трат", "Накхоннайок", "Прачинабури", "Сакэу", "Накхонратчасима", "Бурирами", "Сурин", 
+           "Сисакет", "Убонратчатхани", "Ясотхон", "Чайяпхум", "Амнатчарен", "Нонгбуалампху", 
+           "Конкэн", "Удонтхани", "Лой", "Нонгкхай", "Махасаракхам", "Роет", "Каласин", "Саконнакхон", 
+           "Накхонпханом", "Мукдахан", "Пхатталунг", "Сонгкхла", "Паттани", "Яла", "Наративат", 
+           "Сатун", "Транг", "Накхонситхаммарат", "Пхангнга", "Ранонг", "Чумпхон", "Сураттхани"],
     "en": ["Bangkok", "Chiang Mai", "Phuket", "Krabi", "Chiang Rai", "Lampang", "Lamphun", "Mae Hong Son", 
-"Nakhon Sawan", "Uthai Thani", "Kamphaeng Phet", "Tak", "Sukhothai", "Phitsanulok", "Phichit", 
-"Phetchabun", "Ratchaburi", "Kanchanaburi", "Suphan Buri", "Nakhon Pathom", "Samut Sakhon", 
-"Samut Songkhram", "Phetchaburi", "Prachuap Khiri Khan", "Chon Buri", "Rayong", "Chanthaburi", 
-"Trat", "Nakhon Nayok", "Prachin Buri", "Sa Kaeo", "Nakhon Ratchasima", "Buri Ram", "Surin", 
-"Si Sa Ket", "Ubon Ratchathani", "Yasothon", "Chaiyaphum", "Amnat Charoen", "Nong Bua Lam Phu", 
-"Khon Kaen", "Udon Thani", "Loei", "Nong Khai", "Maha Sarakham", "Roi Et", "Kalasin", "Sakon Nakhon", 
-"Nakhon Phanom", "Mukdahan", "Phatthalung", "Songkhla", "Pattani", "Yala", "Narathiwat", 
-"Satun", "Trang", "Nakhon Si Thammarat", "Phang Nga", "Ranong", "Chumphon", "Surat Thani"]
+           "Nakhon Sawan", "Uthai Thani", "Kamphaeng Phet", "Tak", "Sukhothai", "Phitsanulok", "Phichit", 
+           "Phetchabun", "Ratchaburi", "Kanchanaburi", "Suphan Buri", "Nakhon Pathom", "Samut Sakhon", 
+           "Samut Songkhram", "Phetchaburi", "Prachuap Khiri Khan", "Chon Buri", "Rayong", "Chanthaburi", 
+           "Trat", "Nakhon Nayok", "Prachin Buri", "Sa Kaeo", "Nakhon Ratchasima", "Buri Ram", "Surin", 
+           "Si Sa Ket", "Ubon Ratchathani", "Yasothon", "Chaiyaphum", "Amnat Charoen", "Nong Bua Lam Phu", 
+           "Khon Kaen", "Udon Thani", "Loei", "Nong Khai", "Maha Sarakham", "Roi Et", "Kalasin", "Sakon Nakhon", 
+           "Nakhon Phanom", "Mukdahan", "Phatthalung", "Songkhla", "Pattani", "Yala", "Narathiwat", 
+           "Satun", "Trang", "Nakhon Si Thammarat", "Phang Nga", "Ranong", "Chumphon", "Surat Thani"]
 }
 
 user_data = {}
@@ -49,9 +49,6 @@ def select_language(update: Update, context: CallbackContext):
         query.edit_message_text(
             "Thank you for trying our bot! To get started, please subscribe to this channel: https://t.me/rostifeoth"
         )
-
-    # Проверка подписки (заглушка)
-    # После подтверждения подписи вызвать функцию check_provinces
 
 # Проверка провинций
 def check_provinces(update: Update, context: CallbackContext):
@@ -100,15 +97,14 @@ def select_province(update: Update, context: CallbackContext):
 def main():
     application = Application.builder().token("7761938356:AAHmFF40Kd8qNRONnfGFNgtP2-cUzQsDmL8").build()
 
-application.add_handler(CommandHandler("start", start))
-application.add_handler(CallbackQueryHandler(select_language, pattern="^lang_"))
-application.add_handler(CallbackQueryHandler(select_province, pattern="^province_"))
+    application.add_handler(CommandHandler("start", start))
+    application.add_handler(CallbackQueryHandler(select_language, pattern="^lang_"))
+    application.add_handler(CallbackQueryHandler(select_province, pattern="^province_"))
 
-application.run_polling()
+    application.run_polling()
 
-# Для ожидания завершения работы
-application.idle()
-
+    # Для ожидания завершения работы
+    application.idle()
 
 if __name__ == "__main__":
     main()
