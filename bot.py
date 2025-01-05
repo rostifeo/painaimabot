@@ -1,5 +1,5 @@
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
-from telegram.ext import Updater, CommandHandler, CallbackQueryHandler, CallbackContext
+from telegram.ext import Application, CommandHandler, CallbackQueryHandler, CallbackContext
 
 # Список провинций Таиланда
 provinces = {
@@ -98,14 +98,17 @@ def select_province(update: Update, context: CallbackContext):
 
 # Основная функция
 def main():
-    updater = Updater("7761938356:AAHmFF40Kd8qNRONnfGFNgtP2-cUzQsDmL8")
+    application = Application.builder().token("7761938356:AAHmFF40Kd8qNRONnfGFNgtP2-cUzQsDmL8").build()
 
-    updater.dispatcher.add_handler(CommandHandler("start", start))
-    updater.dispatcher.add_handler(CallbackQueryHandler(select_language, pattern="^lang_"))
-    updater.dispatcher.add_handler(CallbackQueryHandler(select_province, pattern="^province_"))
+application.add_handler(CommandHandler("start", start))
+application.add_handler(CallbackQueryHandler(select_language, pattern="^lang_"))
+application.add_handler(CallbackQueryHandler(select_province, pattern="^province_"))
 
-    updater.start_polling()
-    updater.idle()
+application.run_polling()
+
+# Для ожидания завершения работы
+application.idle()
+
 
 if __name__ == "__main__":
     main()
