@@ -112,7 +112,7 @@ async def select_province(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 # Запуск бота
 def main():
-    application = Application.builder().token(os.getenv("BOT_TOKEN")).build()
+    application = Application.builder().token(os.getenv("7761938356:AAHmFF40Kd8qNRONnfGFNgtP2-cUzQsDmL8")).build()
     application.add_handler(CommandHandler("start", start))
     application.add_handler(CallbackQueryHandler(select_language, pattern="^lang_"))
     application.add_handler(CallbackQueryHandler(select_province, pattern="^province_"))
