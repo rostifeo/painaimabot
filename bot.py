@@ -121,4 +121,5 @@ async def select_province(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def show_progress(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
-    lang = context.
+lang = context.chat_data.get("language", "en")
+
