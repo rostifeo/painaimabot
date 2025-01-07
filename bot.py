@@ -1,7 +1,14 @@
 import logging
 import os
+from dotenv import load_dotenv  # Импортируем для загрузки переменных окружения
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Application, CommandHandler, CallbackQueryHandler, ContextTypes
+
+# Загружаем переменные окружения из файла .env
+load_dotenv()
+
+# Теперь токен будет загружен из переменной окружения
+TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 
 # Настройка логирования
 logging.basicConfig(
