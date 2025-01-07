@@ -1,16 +1,15 @@
 import logging
 import os
-
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Application, CommandHandler, CallbackQueryHandler, ContextTypes
 
 # Настройка логирования
 logging.basicConfig(
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO
 )
 logger = logging.getLogger(__name__)
 
-# Список провинций Таиланда (лучше использовать dict для хранения данных)
+# Список провинций Таиланда
 provinces = {
     "ru": ["Бангкок", "Чиангмай", "Пхукет", "Краби", "Чианграй", "Лампанг", "Лампхун", "Мае Хонг Сон",
            "Накхонсаван", "Утхайтхани", "Кампхэнгпхет", "Так", "Сукхотхай", "Пхитсанулок", "Пхичит",
@@ -32,7 +31,7 @@ provinces = {
            "Satun", "Trang", "Nakhon Si Thammarat", "Phang Nga", "Ranong", "Chumphon", "Surat Thani"]
 }
 
-# Функция для проверки подписки на канал
+# Проверка подписки на канал
 async def check_subscription(update: Update, context: ContextTypes.DEFAULT_TYPE, channel_username: str):
     try:
         chat_member = await context.bot.get_chat_member(chat_id=channel_username, user_id=update.effective_user.id)
@@ -55,7 +54,7 @@ async def select_language(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
 
-    lang = query.data.split("_")[1] # Извлекаем язык из callback_data
+    lang = query.data.split("_")[1]  # Извлекаем язык
     context.user_data["language"] = lang
 
     channel_username = "@mrsaforost" if lang == "ru" else "@rostifeoth"
@@ -64,17 +63,17 @@ async def select_language(update: Update, context: ContextTypes.DEFAULT_TYPE):
             "Как хорошо ты знаешь Таиланд? Давай проверим, в каких провинциях ты уже был?" if lang == "ru" else \
             "How well do you know Thailand? Let's check which provinces you have already visited?"
         )
-        await show_provinces(update, context) # Сразу показываем список провинций
+        await show_provinces(update, context)
     else:
         await query.edit_message_text(
             f"Пожалуйста, подпишитесь на канал {channel_username} для продолжения." if lang == "ru" else \
             f"Please subscribe to the channel {channel_username} to continue."
         )
 
+# Показ провинций
 async def show_provinces(update: Update, context: ContextTypes.DEFAULT_TYPE):
     lang = context.user_data.get("language", "en")
-    user_id = update.effective_user.id
-    visited = context.user_data.setdefault("visited_provinces", {}).get(user_id, set())
+    visited = context.user_data.setdefault("visited_provinces", set())
     available = [prov for prov in provinces[lang] if prov not in visited]
 
     if not available:
@@ -83,18 +82,12 @@ async def show_provinces(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
         return
 
-    keyboard = [[InlineKeyboardButton(prov, callback_data=f"province_{prov}") for prov in available]]
+    keyboard = [[InlineKeyboardButton(prov, callback_data=f"province_{prov}")] for prov in available]
     reply_markup = InlineKeyboardMarkup(keyboard)
-    try:
-        await update.callback_query.edit_message_text(
-            "Выберите провинцию, в которой вы были:" if lang == "ru" else "Select a province you have visited:",
-            reply_markup=reply_markup
-        )
-    except telegram.error.BadRequest:
-        await update.callback_query.message.reply_text(
-            "Выберите провинцию, в которой вы были:" if lang == "ru" else "Select a province you have visited:",
-            reply_markup=reply_markup
-        )
+    await update.callback_query.edit_message_text(
+        "Выберите провинцию, в которой вы были:" if lang == "ru" else "Select a province you have visited:",
+        reply_markup=reply_markup
+    )
 
 # Обработчик выбора провинции
 async def select_province(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -102,10 +95,8 @@ async def select_province(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await query.answer()
 
     province = query.data.replace("province_", "")
-    user_id = update.effective_user.id
     lang = context.user_data.get("language", "en")
-
-    visited = context.user_data.setdefault("visited_provinces", {}).setdefault(user_id, set())
+    visited = context.user_data.setdefault("visited_provinces", set())
     visited.add(province)
 
     visited_count = len(visited)
@@ -117,9 +108,16 @@ async def select_province(update: Update, context: ContextTypes.DEFAULT_TYPE):
         f"Progress: {visited_count}/{total_count} provinces ({progress:.2f}%)"
     )
 
-    await show_provinces(update, context) # Показываем обновленный список
+    await show_provinces(update, context)
 
-async def show_progress(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    user_id = update.effective_user.id
-lang = context.chat_data.get("language", "en")
+# Запуск бота
+def main():
+    application = Application.builder().token(os.getenv("BOT_TOKEN")).build()
+    application.add_handler(CommandHandler("start", start))
+    application.add_handler(CallbackQueryHandler(select_language, pattern="^lang_"))
+    application.add_handler(CallbackQueryHandler(select_province, pattern="^province_"))
 
+    application.run_polling()
+
+if __name__ == "__main__":
+    main()
