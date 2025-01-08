@@ -17,7 +17,7 @@ TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 
 # Настройка логирования
 logging.basicConfig(
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.ERROR
 )
 logger = logging.getLogger(__name__)
 
@@ -182,16 +182,19 @@ async def check_subscription(update: Update, context: ContextTypes.DEFAULT_TYPE,
         return chat_member.status in ("member", "creator", "administrator")
     except Exception as e:
         logger.error(f"Error checking subscription: {e}")
-        return False
+        raise
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    keyboard = [
-        [InlineKeyboardButton("Русский", callback_data="lang_ru"),
-         InlineKeyboardButton("English", callback_data="lang_en")]
-    ]
-    reply_markup = InlineKeyboardMarkup(keyboard)
-    await update.message.reply_text("Выберите язык / Choose a language:", reply_markup=reply_markup)
+        keyboard = [
+            [InlineKeyboardButton("Русский", callback_data="lang_ru"),
+             InlineKeyboardButton("English", callback_data="lang_en")]
+        ]
+        reply_markup = InlineKeyboardMarkup(keyboard)
+        if update.message:
+            await update.message.reply_text("Выберите язык / Choose a language:", reply_markup=reply_markup)
+        elif update.callback_query:
+            await update.callback_query.edit_message_text("Выберите язык / Choose a language:", reply_markup=reply_markup)
 
 
 async def select_language(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -217,17 +220,23 @@ async def select_language(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def show_main_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
     lang = context.user_data.get("language", "en")
-    keyboard = [
+    keyboard = [  # Создаем клавиатуру ВНУТРИ функции
         [InlineKeyboardButton("Добавить провинцию" if lang == "ru" else "Add Province", callback_data="add_province"),
          InlineKeyboardButton("Посмотреть результат" if lang == "ru" else "View Result", callback_data="view_result")],
-        [InlineKeyboardButton("Авиабилеты дешево ✈️" if lang == "ru" else "Cheap Flights ✈️", 
-                               url="https://aviasales.tp.st/vYFLdQPU" if lang == "ru" else "https://wayaway.tp.st/jf2iwRrr")]
+        [InlineKeyboardButton("Авиабилеты дешево ✈️" if lang == "ru" else "Cheap Flights ✈️",
+                              url="https://aviasales.tp.st/vYFLdQPU" if lang == "ru" else "https://wayaway.tp.st/jf2iwRrr")]
     ]
-    reply_markup = InlineKeyboardMarkup(keyboard)
-    await update.callback_query.edit_message_text(
-        "Главное меню" if lang == "ru" else "Main menu",
-        reply_markup=reply_markup
-    )
+    reply_markup = InlineKeyboardMarkup(keyboard) # Создаем разметку клавиатуры
+    if update.callback_query:
+        await update.callback_query.edit_message_text(
+            "Главное меню" if lang == "ru" else "Main menu",
+            reply_markup=reply_markup
+        )
+    elif update.message: # Добавил elif для обработки первого запуска /start
+        await update.message.reply_text(
+            "Главное меню" if lang == "ru" else "Main menu",
+            reply_markup=reply_markup
+        )
 
 
 async def show_provinces(update: Update, context: ContextTypes.DEFAULT_TYPE):
