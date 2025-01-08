@@ -1,0 +1,13 @@
+[Unit]
+Description=Your Bot Service
+After=network.target
+
+[Service]
+User=your_user
+WorkingDirectory=/home/rfeofanov/painaimabot
+ExecStart=/usr/bin/python3 /home/rfeofanov/painaimabot/bot.py
+Restart=always
+Environment=PYTHONUNBUFFERED=1
+
+[Install]
+WantedBy=multi-user.target
