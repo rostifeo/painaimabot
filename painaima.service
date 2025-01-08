@@ -3,7 +3,7 @@ Description=Your Bot Service
 After=network.target
 
 [Service]
-User=your_user
+User=rfeofanov
 WorkingDirectory=/home/rfeofanov/painaimabot
 ExecStart=/usr/bin/python3 /home/rfeofanov/painaimabot/bot.py
 Restart=always
